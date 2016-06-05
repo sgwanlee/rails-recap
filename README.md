@@ -41,8 +41,7 @@ user = User.new do |u|
 5.3 CRUD-Update
 bulk update --> ```.update_all```
 
-5.4 CRUD-Delete
-```.destroy```
+5.4 CRUD-Delete ```.destroy```
 
 6.1 ```.save```, ```.update```에서 validation이 진행됩니다.
 bang counterparts ( ```.save!```, ```.update!```)는 validation에 실패하면 exception을 발생시킵니다.
