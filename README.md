@@ -71,5 +71,90 @@ migration 이름이 "CreateXXX"에다 뒤에 column list가 따라오면 Rails�
 column type을 ```reference```로 하면 ```add_reference``` method가 추가된다. 이 method는 foreing key를 추가한다.
 
 
+2.2
+2.3
 
-2.2 
+######3 Writing a Migration
+3.1 ```create_table```
+
+3.2 ```create_join_table```
+
+```
+create_join_table :products, :categories
+```
+이 migration은 categories_products table을 만들고, category_id, product_id 두 개의 column을 만든다.
+
+3.3 ```change_table```
+
+3.4
+3.5
+3.6
+
+```
+add_foriegn_key :articles, :authors
+```
+*articles* table에 *author_id* column을 만든다. *author* table의 *id* column을 참조한다. 
+
+3.7
+Active Record에서 제공하는 helper method로 부족하면, 직접 SQL을 실행시킬 수 있다.
+
+```
+Product.connection.execute('UPDATE `products` SET `price`=`free` WHERE 1')
+```
+
+3.9 복잡한 migration일 때는 rollback function을 직접 적어준다.
+[using reversible](http://guides.rubyonrails.org/active_record_migrations.html#using-reversible)
+
+3.10
+
+3.11
+```revert`` method를 통해서 이전 migration을 roll-back할 수 도 있음
+
+######4 Running migration
+특정 version까지 migration
+
+```
+$ bin/rake db:migrate VERSION=20080906120000
+```
+
+4.1
+```$ bin/rake db:rollback STEP=3```
+STEP으로 몇개의 migration을 rollback할지 정할 수 있다.
+```$ bin/rake db:redo STEP=3```
+redo도 마찬가지
+
+4.2
+
+4.3
+```db:setup``` --> 새로 만들기
+```db:reset``` --> drop하고 다시 새로 만들기
+```db:drop``` --> drop하기
+
+4.4
+다른 환경에서 migration
+
+```
+$ bin/rake db:migrate RAILS_ENV=test
+```
+
+######5 이미 있는 migration 고치기
+rollback하고 고치고 다시 migrate를 하면된다. 하지만 그리 좋은 방법은 아니다. 같이 일하는 사람들이 골치아파 진다. 새로운 migration 파일을 만들는게 좋다.
+
+######6 Schema
+[annotate_models](https://github.com/ctran/annotate_models) gem은 각 모델 파일에 schema를 자동으로 작성해준다.
+
+schema format을 ```config/application.rb``` 의 ```config.active_record.schema_format``` 에서 :ruby 또는 :sql로 변경할 수 있다. 
+######8. Seed
+Migration으로 seed data를 넣을 수도 있지만, Rails엔 ```seeds``` feature가 있음
+
+```
+db/seeds.rb
+
+5.times do |i|
+  Product.create(name: "Product ##{i}", description: "A product.")
+end
+```
+
+```
+rake db:seed
+```
